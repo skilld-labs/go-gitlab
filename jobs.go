@@ -27,7 +27,7 @@ import (
 // ListJobsOptions are options for two list apis
 type ListJobsOptions struct {
 	ListOptions
-	Scope []BuildState `url:"scope,omitempty" json:"scope,omitempty"`
+	Scope []BuildStateValue `url:"scope,omitempty" json:"scope,omitempty"`
 }
 
 // JobsService handles communication with the ci builds related methods
@@ -324,7 +324,7 @@ func (s *JobsService) KeepArtifacts(pid interface{}, jobID int, options ...Optio
 	return job, resp, err
 }
 
-// PlayJob triggers a nanual action to start a job.
+// PlayJob triggers a manual action to start a job.
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ce/api/jobs.html#play-a-job
