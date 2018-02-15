@@ -40,6 +40,36 @@ func TestListProjects(t *testing.T) {
 	}
 }
 
+func TestListUserProjects(t *testing.T) {
+	mux, server, client := setup()
+	defer teardown(server)
+
+	mux.HandleFunc("/users/1/projects", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		fmt.Fprint(w, `[{"id":1},{"id":2}]`)
+	})
+
+	opt := &ListProjectsOptions{
+		ListOptions: ListOptions{2, 3},
+		Archived:    Bool(true),
+		OrderBy:     String("name"),
+		Sort:        String("asc"),
+		Search:      String("query"),
+		Simple:      Bool(true),
+		Visibility:  Visibility(PublicVisibility),
+	}
+
+	projects, _, err := client.Projects.ListUserProjects(1, opt)
+	if err != nil {
+		t.Errorf("Projects.ListUserProjects returned error: %v", err)
+	}
+
+	want := []*Project{{ID: 1}, {ID: 2}}
+	if !reflect.DeepEqual(want, projects) {
+		t.Errorf("Projects.ListUserProjects returned %+v, want %+v", projects, want)
+	}
+}
+
 func TestListOwnedProjects(t *testing.T) {
 	mux, server, client := setup()
 	defer teardown(server)
@@ -201,5 +231,38 @@ func TestUploadFile(t *testing.T) {
 
 	if !reflect.DeepEqual(want, file) {
 		t.Errorf("Prokects.UploadFile returned %+v, want %+v", file, want)
+	}
+}
+
+func TestListProjectForks(t *testing.T) {
+	mux, server, client := setup()
+	defer teardown(server)
+
+	mux.HandleFunc("/projects/", func(w http.ResponseWriter, r *http.Request) {
+		want := "/projects/namespace%2Fname/forks"
+		if !strings.HasPrefix(r.RequestURI, want) {
+			t.Errorf("Request url: %+v, should have prefix %s", r.RequestURI, want)
+		}
+		testMethod(t, r, "GET")
+		fmt.Fprint(w, `[{"id":1},{"id":2}]`)
+	})
+
+	opt := &ListProjectsOptions{}
+	opt.ListOptions = ListOptions{2, 3}
+	opt.Archived = Bool(true)
+	opt.OrderBy = String("name")
+	opt.Sort = String("asc")
+	opt.Search = String("query")
+	opt.Simple = Bool(true)
+	opt.Visibility = Visibility(PublicVisibility)
+
+	projects, _, err := client.Projects.ListProjectForks("namespace/name", opt)
+	if err != nil {
+		t.Errorf("Projects.ListProjectForks returned error: %v", err)
+	}
+
+	want := []*Project{{ID: 1}, {ID: 2}}
+	if !reflect.DeepEqual(want, projects) {
+		t.Errorf("Projects.ListProjects returned %+v, want %+v", projects, want)
 	}
 }
