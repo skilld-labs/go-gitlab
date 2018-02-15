@@ -65,6 +65,8 @@ type Project struct {
 	LastActivityAt                            *time.Time        `json:"last_activity_at,omitempty"`
 	CreatorID                                 int               `json:"creator_id"`
 	Namespace                                 *ProjectNamespace `json:"namespace"`
+	ImportStatus                              string            `json:"import_status"`
+	ImportError                               string            `json:"import_error"`
 	Permissions                               *Permissions      `json:"permissions"`
 	Archived                                  bool              `json:"archived"`
 	AvatarURL                                 string            `json:"avatar_url"`
@@ -158,7 +160,7 @@ type ForkParent struct {
 	WebURL            string `json:"web_url"`
 }
 
-// Links represents a project web liks for self, issues, merge_requests,
+// Links represents a project web links for self, issues, merge_requests,
 // repo_branches, labels, events, members.
 type Links struct {
 	Self          string `json:"self"`

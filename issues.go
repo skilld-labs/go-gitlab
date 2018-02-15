@@ -59,6 +59,16 @@ type Issue struct {
 		State     string     `json:"state"`
 		CreatedAt *time.Time `json:"created_at"`
 	} `json:"assignees"`
+	Assignee struct {
+		ID        int    `json:"id"`
+		Name      string `json:"name"`
+		Username  string `json:"username"`
+		State     string `json:"state"`
+		AvatarURL string `json:"avatar_url"`
+		WebURL    string `json:"web_url"`
+	} `json:"assignee"`
+	Upvotes          int        `json:"upvotes"`
+	Downvotes        int        `json:"downvotes"`
 	Labels           []string   `json:"labels"`
 	Title            string     `json:"title"`
 	UpdatedAt        *time.Time `json:"updated_at"`
@@ -70,7 +80,15 @@ type Issue struct {
 	WebURL           string     `json:"web_url"`
 	TimeStats        *TimeStats `json:"time_stats"`
 	Confidential     bool       `json:"confidential"`
+	Weight           int        `json:"weight"`
 	DiscussionLocked bool       `json:"discussion_locked"`
+	Links            struct {
+		Self       string `json:"self"`
+		Notes      string `json:"notes"`
+		AwardEmoji string `json:"award_emoji"`
+		Project    string `json:"project"`
+	} `json:"_links"`
+	IssueLinkID int `json:"issue_link_id"`
 }
 
 func (i Issue) String() string {
@@ -248,6 +266,7 @@ type CreateIssueOptions struct {
 	DueDate                            *ISOTime   `url:"due_date,omitempty" json:"due_date,omitempty"`
 	MergeRequestToResolveDiscussionsOf *int       `url:"merge_request_to_resolve_discussions_of,omitempty" json:"merge_request_to_resolve_discussions_of,omitempty"`
 	DiscussionToResolve                *string    `url:"discussion_to_resolve,omitempty" json:"discussion_to_resolve,omitempty"`
+	Weight                             *int       `url:"weight,omitempty" json:"weight,omitempty"`
 }
 
 // CreateIssue creates a new project issue.

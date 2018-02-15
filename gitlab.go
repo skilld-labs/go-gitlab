@@ -70,6 +70,19 @@ const (
 	OwnerPermission      AccessLevelValue = 50
 )
 
+// BuildStateValue represents a GitLab build state.
+type BuildStateValue string
+
+// These constants represent all valid build states.
+const (
+	Pending  BuildStateValue = "pending"
+	Running  BuildStateValue = "running"
+	Success  BuildStateValue = "success"
+	Failed   BuildStateValue = "failed"
+	Canceled BuildStateValue = "canceled"
+	Skipped  BuildStateValue = "skipped"
+)
+
 // ISOTime represents an ISO 8601 formatted date
 type ISOTime time.Time
 
@@ -166,6 +179,17 @@ var notificationLevelTypes = map[string]NotificationLevelValue{
 	"custom":        CustomNotificationLevel,
 }
 
+// OrderByValue represent in which order to sort the item
+type OrderByValue string
+
+// These constants represent all valid order by values.
+const (
+	OrderByID     OrderByValue = "id"
+	OrderByStatus OrderByValue = "status"
+	OrderByRef    OrderByValue = "ref"
+	OrderByUserID OrderByValue = "user_id"
+)
+
 // VisibilityValue represents a visibility level within GitLab.
 //
 // GitLab API docs: https://docs.gitlab.com/ce/api/
@@ -180,13 +204,49 @@ const (
 	PublicVisibility   VisibilityValue = "public"
 )
 
+// EventTypeValue represents actions type for contribution events
+type EventTypeValue string
+
+// List of available action type
+//
+// GitLab API docs: https://docs.gitlab.com/ce/api/events.html#action-types
+const (
+	CreatedEventType   EventTypeValue = "created"
+	UpdatedEventType   EventTypeValue = "updated"
+	ClosedEventType    EventTypeValue = "closed"
+	ReopenedEventType  EventTypeValue = "reopened"
+	PushedEventType    EventTypeValue = "pushed"
+	CommentedEventType EventTypeValue = "commented"
+	MergedEventType    EventTypeValue = "merged"
+	JoinedEventType    EventTypeValue = "joined"
+	LeftEventType      EventTypeValue = "left"
+	DestroyedEventType EventTypeValue = "destroyed"
+	ExpiredEventType   EventTypeValue = "expired"
+)
+
+// EventTargetTypeValue represents actions type value for contribution events
+type EventTargetTypeValue string
+
+// List of available action type
+//
+// GitLab API docs: https://docs.gitlab.com/ce/api/events.html#target-types
+const (
+	IssueEventTargetType        EventTargetTypeValue = "issue"
+	MilestoneEventTargetType    EventTargetTypeValue = "milestone"
+	MergeRequestEventTargetType EventTargetTypeValue = "merge_request"
+	NoteEventTargetType         EventTargetTypeValue = "note"
+	ProjectEventTargetType      EventTargetTypeValue = "project"
+	SnippetEventTargetType      EventTargetTypeValue = "snippet"
+	UserEventTargetType         EventTargetTypeValue = "user"
+)
+
 // A Client manages communication with the GitLab API.
 type Client struct {
 	// HTTP client used to communicate with the API.
 	client *http.Client
 
 	// Base URL for API requests. Defaults to the public GitLab API, but can be
-	// set to a domain endpoint to use with aself hosted GitLab server. baseURL
+	// set to a domain endpoint to use with a self hosted GitLab server. baseURL
 	// should always be specified with a trailing slash.
 	baseURL *url.URL
 
@@ -206,17 +266,21 @@ type Client struct {
 	Commits              *CommitsService
 	DeployKeys           *DeployKeysService
 	Environments         *EnvironmentsService
+	Events               *EventsService
 	Features             *FeaturesService
 	Groups               *GroupsService
 	GroupMembers         *GroupMembersService
 	Issues               *IssuesService
+	IssueLinks           *IssueLinksService
 	Jobs                 *JobsService
+	Boards               *IssueBoardsService
 	Labels               *LabelsService
 	MergeRequests        *MergeRequestsService
 	Milestones           *MilestonesService
 	Namespaces           *NamespacesService
 	Notes                *NotesService
 	NotificationSettings *NotificationSettingsService
+	PagesDomains         *PagesDomainsService
 	Pipelines            *PipelinesService
 	PipelineTriggers     *PipelineTriggersService
 	Projects             *ProjectsService
@@ -284,17 +348,21 @@ func newClient(httpClient *http.Client, tokenType tokenType, token string) *Clie
 	c.Commits = &CommitsService{client: c}
 	c.DeployKeys = &DeployKeysService{client: c}
 	c.Environments = &EnvironmentsService{client: c}
+	c.Events = &EventsService{client: c}
 	c.Features = &FeaturesService{client: c}
 	c.Groups = &GroupsService{client: c}
 	c.GroupMembers = &GroupMembersService{client: c}
 	c.Issues = &IssuesService{client: c, timeStats: timeStats}
+	c.IssueLinks = &IssueLinksService{client: c}
 	c.Jobs = &JobsService{client: c}
+	c.Boards = &IssueBoardsService{client: c}
 	c.Labels = &LabelsService{client: c}
 	c.MergeRequests = &MergeRequestsService{client: c, timeStats: timeStats}
 	c.Milestones = &MilestonesService{client: c}
 	c.Namespaces = &NamespacesService{client: c}
 	c.Notes = &NotesService{client: c}
 	c.NotificationSettings = &NotificationSettingsService{client: c}
+	c.PagesDomains = &PagesDomainsService{client: c}
 	c.Pipelines = &PipelinesService{client: c}
 	c.PipelineTriggers = &PipelineTriggersService{client: c}
 	c.Projects = &ProjectsService{client: c}
@@ -656,10 +724,26 @@ func AccessLevel(v AccessLevelValue) *AccessLevelValue {
 	return p
 }
 
+// BuildState is a helper routine that allocates a new BuildStateValue
+// to store v and returns a pointer to it.
+func BuildState(v BuildStateValue) *BuildStateValue {
+	p := new(BuildStateValue)
+	*p = v
+	return p
+}
+
 // NotificationLevel is a helper routine that allocates a new NotificationLevelValue
 // to store v and returns a pointer to it.
 func NotificationLevel(v NotificationLevelValue) *NotificationLevelValue {
 	p := new(NotificationLevelValue)
+	*p = v
+	return p
+}
+
+// OrderBy is a helper routine that allocates a new OrderByValue
+// to store v and returns a pointer to it.
+func OrderBy(v OrderByValue) *OrderByValue {
+	p := new(OrderByValue)
 	*p = v
 	return p
 }
