@@ -184,10 +184,12 @@ type OrderByValue string
 
 // These constants represent all valid order by values.
 const (
-	OrderByID     OrderByValue = "id"
-	OrderByStatus OrderByValue = "status"
-	OrderByRef    OrderByValue = "ref"
-	OrderByUserID OrderByValue = "user_id"
+	OrderByCreatedAt OrderByValue = "created_at"
+	OrderByID        OrderByValue = "id"
+	OrderByIID       OrderByValue = "iid"
+	OrderByRef       OrderByValue = "ref"
+	OrderByStatus    OrderByValue = "status"
+	OrderByUserID    OrderByValue = "user_id"
 )
 
 // VisibilityValue represents a visibility level within GitLab.
@@ -263,8 +265,10 @@ type Client struct {
 	AwardEmoji           *AwardEmojiService
 	Branches             *BranchesService
 	BuildVariables       *BuildVariablesService
+	BroadcastMessage     *BroadcastMessagesService
 	Commits              *CommitsService
 	DeployKeys           *DeployKeysService
+	Deployments          *DeploymentsService
 	Environments         *EnvironmentsService
 	Events               *EventsService
 	Features             *FeaturesService
@@ -293,6 +297,7 @@ type Client struct {
 	Services             *ServicesService
 	Session              *SessionService
 	Settings             *SettingsService
+	Sidekiq              *SidekiqService
 	Snippets             *SnippetsService
 	SystemHooks          *SystemHooksService
 	Tags                 *TagsService
@@ -345,8 +350,10 @@ func newClient(httpClient *http.Client, tokenType tokenType, token string) *Clie
 	c.AwardEmoji = &AwardEmojiService{client: c}
 	c.Branches = &BranchesService{client: c}
 	c.BuildVariables = &BuildVariablesService{client: c}
+	c.BroadcastMessage = &BroadcastMessagesService{client: c}
 	c.Commits = &CommitsService{client: c}
 	c.DeployKeys = &DeployKeysService{client: c}
+	c.Deployments = &DeploymentsService{client: c}
 	c.Environments = &EnvironmentsService{client: c}
 	c.Events = &EventsService{client: c}
 	c.Features = &FeaturesService{client: c}
@@ -375,6 +382,7 @@ func newClient(httpClient *http.Client, tokenType tokenType, token string) *Clie
 	c.Services = &ServicesService{client: c}
 	c.Session = &SessionService{client: c}
 	c.Settings = &SettingsService{client: c}
+	c.Sidekiq = &SidekiqService{client: c}
 	c.Snippets = &SnippetsService{client: c}
 	c.SystemHooks = &SystemHooksService{client: c}
 	c.Tags = &TagsService{client: c}

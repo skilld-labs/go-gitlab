@@ -22,12 +22,12 @@ to add new and/or missing endpoints. Currently the following services are suppor
 
 - [x] Award Emojis
 - [x] Branches
-- [ ] Broadcast Messages
+- [x] Broadcast Messages
 - [ ] Project-level Variables
 - [ ] Group-level Variables
 - [x] Commits
 - [ ] Custom Attributes
-- [ ] Deployments
+- [x] Deployments
 - [x] Deploy Keys
 - [x] Environments
 - [x] Events
@@ -64,7 +64,7 @@ to add new and/or missing endpoints. Currently the following services are suppor
 - [ ] Search
 - [x] Services
 - [x] Settings
-- [ ] Sidekiq metrics
+- [x] Sidekiq metrics
 - [x] Session
 - [x] System Hooks
 - [x] Tags
